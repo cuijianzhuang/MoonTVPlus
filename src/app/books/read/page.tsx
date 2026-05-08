@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronRight, ChevronUp, Gauge, Headphones, Loader2, Moon, Pause, Play, SkipBack, SkipForward, Square, Sun, Volume2, Waves, X } from 'lucide-react';
+import { BookOpen, ChevronRight, ChevronUp, Gauge, Headphones, Loader2, Moon, Pause, Play, SkipBack, SkipForward, Square, Sun, Volume2, Waves, X } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -1642,7 +1642,18 @@ export default function BookReadPage() {
   const displayedTtsTime = ttsSeeking ? ttsSeekValue : ttsCurrentTime;
 
   if (error) return <div className='p-4 text-sm text-red-500'>{error}</div>;
-  if (!manifest) return <div className='p-4 text-sm text-gray-500'>准备阅读器中...</div>;
+  if (!manifest) {
+    return (
+      <div className='flex h-[calc(100vh-3.5rem)] items-center justify-center bg-white px-4 dark:bg-gray-950'>
+        <div className='flex flex-col items-center gap-4 text-center'>
+          <div className='reader-book-loader'>
+            <BookOpen className='h-10 w-10' strokeWidth={1.75} />
+          </div>
+          <div className='text-sm text-gray-500 dark:text-gray-400'>准备阅读器中...</div>
+        </div>
+      </div>
+    );
+  }
 
   if (manifest.format === 'pdf') {
     if (!pdfBlobUrl) return <div className='p-4 text-sm text-gray-500'>PDF 加载中... {progressLabel}</div>;
@@ -1681,12 +1692,23 @@ export default function BookReadPage() {
                 <span>{progressLabel}</span>
               </div>
             </div>
-            <div className='space-y-3 rounded-3xl bg-gray-50 p-6 dark:bg-gray-900 animate-pulse'>
-              <div className='h-4 w-full rounded bg-gray-200 dark:bg-gray-800' />
-              <div className='h-4 w-11/12 rounded bg-gray-200 dark:bg-gray-800' />
-              <div className='h-4 w-10/12 rounded bg-gray-200 dark:bg-gray-800' />
-              <div className='h-4 w-full rounded bg-gray-200 dark:bg-gray-800' />
-              <div className='h-4 w-9/12 rounded bg-gray-200 dark:bg-gray-800' />
+            <div className='rounded-3xl bg-gray-50 p-6 dark:bg-gray-900'>
+              {fileLoadState === 'opening' ? (
+                <div className='flex min-h-32 flex-col items-center justify-center gap-4 text-center'>
+                  <div className='reader-book-loader'>
+                    <BookOpen className='h-10 w-10' strokeWidth={1.75} />
+                  </div>
+                  <div className='text-sm text-gray-500 dark:text-gray-400'>正在打开电子书...</div>
+                </div>
+              ) : (
+                <div className='space-y-3 animate-pulse'>
+                  <div className='h-4 w-full rounded bg-gray-200 dark:bg-gray-800' />
+                  <div className='h-4 w-11/12 rounded bg-gray-200 dark:bg-gray-800' />
+                  <div className='h-4 w-10/12 rounded bg-gray-200 dark:bg-gray-800' />
+                  <div className='h-4 w-full rounded bg-gray-200 dark:bg-gray-800' />
+                  <div className='h-4 w-9/12 rounded bg-gray-200 dark:bg-gray-800' />
+                </div>
+              )}
             </div>
           </div>
         </div>
